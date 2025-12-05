@@ -2,7 +2,10 @@ import { Movie, CastMember } from '../types';
 
 const API_KEY = 'ce92539c90889cc88a401b0a7f040bb7';
 const BASE_URL = 'https://api.themoviedb.org/3';
-const IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/original';
+
+// OPTIMIZED IMAGES: Use w1280 for hero backgrounds and w500 for posters to prevent lag
+const BACKDROP_BASE_URL = 'https://image.tmdb.org/t/p/w1280';
+const POSTER_BASE_URL = 'https://image.tmdb.org/t/p/w500';
 const PROFILE_BASE_URL = 'https://image.tmdb.org/t/p/w185';
 
 const GENRE_MAP: { [key: number]: string } = {
@@ -49,10 +52,10 @@ const mapResultToMovie = (result: any): Movie => {
     title: result.title || result.name || 'Untitled',
     description: result.overview || 'No description available.',
     thumbnailUrl: result.poster_path 
-      ? `${IMAGE_BASE_URL}${result.poster_path}` 
+      ? `${POSTER_BASE_URL}${result.poster_path}` 
       : 'https://via.placeholder.com/400x600?text=No+Image',
     coverUrl: result.backdrop_path 
-      ? `${IMAGE_BASE_URL}${result.backdrop_path}` 
+      ? `${BACKDROP_BASE_URL}${result.backdrop_path}` 
       : 'https://via.placeholder.com/1920x1080?text=No+Image',
     genre: genreNames,
     year: new Date(result.release_date || result.first_air_date || Date.now()).getFullYear(),

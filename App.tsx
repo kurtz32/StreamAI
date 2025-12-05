@@ -262,8 +262,9 @@ function App() {
       {/* Footer */}
       {!isSearching && (
         <footer className="mt-20 px-12 py-8 text-gray-500 text-sm text-center border-t border-gray-800">
-          <p>&copy; 2024 StreamAI. All rights reserved.</p>
-          <p className="mt-2">Powered by Gemini API & TMDB</p>
+          <p>&copy; 2025 StreamAI. All rights reserved.</p>
+          <p className="mt-2 text-indigo-400 font-medium">Develop by John Kurt Facturan</p>
+          <p className="mt-2 text-xs opacity-50">Powered by Gemini API & TMDB</p>
         </footer>
       )}
     </div>

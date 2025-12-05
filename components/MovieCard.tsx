@@ -17,10 +17,12 @@ const MovieCard: React.FC<MovieCardProps> = ({ movie, onClick, className }) => {
       className="group relative cursor-pointer flex flex-col gap-2 transition-transform duration-300 hover:scale-105"
       onClick={() => onClick(movie)}
     >
-      <div className={`${imageClass} relative rounded-md overflow-hidden shadow-lg`}>
+      <div className={`${imageClass} relative rounded-md overflow-hidden shadow-lg bg-gray-800`}>
         <img
-          src={movie.coverUrl}
+          src={movie.thumbnailUrl} // Use thumbnailUrl (poster) instead of coverUrl for better performance in grids
           alt={movie.title}
+          loading="lazy"
+          decoding="async"
           className="w-full h-full object-cover"
         />
       </div>
