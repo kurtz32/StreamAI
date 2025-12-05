@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Signal, Wifi, WifiOff, Tv, Flag, Globe, Zap, Server, Settings } from 'lucide-react';
+import { ArrowLeft, Signal, Wifi, WifiOff, Tv, Flag, Globe, Zap, Server, Settings, X } from 'lucide-react';
 import { Movie } from '../types';
 import { fetchTVDetails } from '../services/tmdb';
 
@@ -110,20 +110,20 @@ const WatchPage: React.FC<WatchPageProps> = ({ movie, onBack }) => {
     <div className="fixed inset-0 z-50 bg-black flex flex-col animate-fade-in text-white font-sans">
       
       {/* Top Navigation Bar */}
-      <div className="h-16 flex items-center justify-between pr-4 pl-20 md:pl-24 md:pr-6 bg-[#0f0f0f] border-b border-white/5 z-30 shadow-md">
-        <div className="flex items-center gap-4 overflow-hidden">
+      <div className="h-14 md:h-16 flex items-center justify-between px-4 md:pl-24 md:pr-6 bg-[#0f0f0f] border-b border-white/5 z-30 shadow-md">
+        <div className="flex items-center gap-3 md:gap-4 overflow-hidden flex-1">
           <button 
             onClick={handleBack}
-            className="p-2 rounded-full hover:bg-white/10 transition text-gray-300 hover:text-white flex-shrink-0"
+            className="p-1.5 md:p-2 rounded-full hover:bg-white/10 transition text-gray-300 hover:text-white flex-shrink-0"
           >
-            <ArrowLeft size={22} />
+            <ArrowLeft size={20} className="md:w-[22px] md:h-[22px]" />
           </button>
           <div className="min-w-0">
-            <h1 className="text-base md:text-lg font-bold text-gray-100 truncate">
+            <h1 className="text-sm md:text-lg font-bold text-gray-100 truncate">
               {movie.title}
             </h1>
             {movie.mediaType === 'tv' && (
-              <div className="flex items-center gap-2 text-xs text-indigo-400 font-medium">
+              <div className="flex items-center gap-2 text-[10px] md:text-xs text-indigo-400 font-medium">
                 <span>S{season}</span>
                 <span className="w-1 h-1 bg-gray-600 rounded-full"></span>
                 <span>E{episode}</span>
@@ -132,12 +132,12 @@ const WatchPage: React.FC<WatchPageProps> = ({ movie, onBack }) => {
           </div>
         </div>
         
-        <div className="flex items-center gap-3">
-          <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-md bg-[#1a1a1a] border border-white/5 text-xs text-gray-400">
+        <div className="flex items-center gap-2 md:gap-3 pl-2">
+          <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-md bg-[#1a1a1a] border border-white/5 text-xs text-gray-400">
              <Signal size={14} className="text-green-500" />
              <span className="font-mono">PING: 24ms</span>
           </div>
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-indigo-900/20 border border-indigo-500/30 text-xs font-medium text-indigo-200">
+          <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-md bg-indigo-900/20 border border-indigo-500/30 text-xs font-medium text-indigo-200">
              <Globe size={14} />
              <span>{server.name}</span>
           </div>
@@ -160,13 +160,13 @@ const WatchPage: React.FC<WatchPageProps> = ({ movie, onBack }) => {
             {loading && (
               <div className="absolute inset-0 flex flex-col items-center justify-center z-10 bg-black">
                  <div className="relative">
-                   <div className="w-16 h-16 border-4 border-indigo-600/30 border-t-indigo-500 rounded-full animate-spin"></div>
+                   <div className="w-12 h-12 md:w-16 md:h-16 border-4 border-indigo-600/30 border-t-indigo-500 rounded-full animate-spin"></div>
                    <div className="absolute inset-0 flex items-center justify-center">
-                     <Zap size={20} className="text-indigo-500 animate-pulse" />
+                     <Zap size={16} className="text-indigo-500 animate-pulse md:w-5 md:h-5" />
                    </div>
                  </div>
-                 <p className="text-gray-400 text-sm mt-4 font-medium animate-pulse">
-                   Connecting to secure server <span className="text-indigo-400">{server.name}</span>...
+                 <p className="text-gray-400 text-xs md:text-sm mt-4 font-medium animate-pulse text-center px-4">
+                   Connecting to secure server <br className="md:hidden"/> <span className="text-indigo-400">{server.name}</span>...
                  </p>
               </div>
             )}
@@ -183,9 +183,24 @@ const WatchPage: React.FC<WatchPageProps> = ({ movie, onBack }) => {
           </div>
         </div>
 
-        {/* Right: Server & Episode Sidebar */}
-        <div className={`bg-[#121212] border-l border-white/5 flex flex-col flex-shrink-0 z-30 shadow-xl transition-all duration-300 ease-in-out ${showSidebar ? 'w-72 md:w-80 opacity-100' : 'w-0 opacity-0 overflow-hidden'}`}>
-          <div className="w-72 md:w-80 h-full flex flex-col">
+        {/* Sidebar: Absolute on Mobile, Relative on Desktop */}
+        <div className={`
+          absolute top-0 right-0 bottom-0 z-40 md:relative 
+          bg-[#121212] border-l border-white/5 shadow-xl transition-all duration-300 ease-in-out
+          flex flex-col
+          ${showSidebar ? 'w-full md:w-80 opacity-100 translate-x-0' : 'w-0 md:w-0 opacity-0 md:opacity-0 translate-x-full md:translate-x-0 overflow-hidden'}
+        `}>
+          <div className="w-full md:w-80 h-full flex flex-col">
+             {/* Mobile Header for Sidebar */}
+             <div className="md:hidden p-4 border-b border-white/10 flex justify-between items-center bg-[#161616]">
+                <h3 className="font-bold text-white flex items-center gap-2">
+                   <Settings size={16} /> Settings
+                </h3>
+                <button onClick={() => setShowSidebar(false)} className="text-gray-400 hover:text-white">
+                   <X size={20} />
+                </button>
+             </div>
+
             {/* Section: Server List */}
             <div className="flex-1 flex flex-col min-h-0">
               <div className="p-4 border-b border-white/5 bg-[#161616]">
@@ -203,7 +218,11 @@ const WatchPage: React.FC<WatchPageProps> = ({ movie, onBack }) => {
                  {SERVERS.map((srv) => (
                    <button
                      key={srv.id}
-                     onClick={() => setServer(srv)}
+                     onClick={() => {
+                        setServer(srv);
+                        // On mobile, maybe close sidebar after selection or keep open?
+                        // Let's keep open as users might try different servers
+                     }}
                      className={`w-full flex items-center justify-between p-2.5 rounded-lg transition-all group ${
                        server.id === srv.id 
                          ? 'bg-gradient-to-r from-indigo-900/40 to-purple-900/20 border border-indigo-500/40' 

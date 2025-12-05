@@ -27,19 +27,20 @@ const ContentRow: React.FC<ContentRowProps> = ({ title, movies, onMovieClick }) 
 
   return (
     <div className="space-y-2 px-4 md:px-12 my-6 md:my-10 relative group">
-      <h2 className="text-gray-200 text-base md:text-xl font-semibold transition hover:text-white cursor-pointer mb-3">
+      <h2 className="text-gray-200 text-base md:text-xl font-semibold transition hover:text-white cursor-pointer mb-2 md:mb-3">
         {title}
       </h2>
       
-      <div className="relative group">
+      <div className="relative group/row">
+        {/* Hide arrows on mobile, they interfere with touch scrolling */}
         <ChevronLeft 
-          className={`absolute top-0 bottom-0 left-2 z-40 m-auto h-9 w-9 cursor-pointer opacity-0 transition hover:scale-125 group-hover:opacity-100 ${!isMoved && 'hidden'}`}
+          className={`hidden md:block absolute top-0 bottom-0 left-2 z-40 m-auto h-9 w-9 cursor-pointer opacity-0 transition hover:scale-125 group-hover/row:opacity-100 bg-black/50 rounded-full p-1 ${!isMoved && 'hidden'}`}
           onClick={() => handleClick('left')}
         />
 
         <div 
           ref={rowRef}
-          className="flex items-start space-x-2.5 overflow-x-scroll no-scrollbar md:space-x-4 pb-4 pt-2"
+          className="flex items-start space-x-3 md:space-x-4 overflow-x-scroll no-scrollbar pb-4 pt-2"
         >
           {movies.map((movie) => (
             <MovieCard key={movie.id} movie={movie} onClick={onMovieClick} />
@@ -47,7 +48,7 @@ const ContentRow: React.FC<ContentRowProps> = ({ title, movies, onMovieClick }) 
         </div>
 
         <ChevronRight 
-          className="absolute top-0 bottom-0 right-2 z-40 m-auto h-9 w-9 cursor-pointer opacity-0 transition hover:scale-125 group-hover:opacity-100"
+          className="hidden md:block absolute top-0 bottom-0 right-2 z-40 m-auto h-9 w-9 cursor-pointer opacity-0 transition hover:scale-125 group-hover/row:opacity-100 bg-black/50 rounded-full p-1"
           onClick={() => handleClick('right')}
         />
       </div>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Search, Bell, Sparkles, X, Check, Bookmark, PlayCircle } from 'lucide-react';
+import { Search, Bell, Sparkles, X, Bookmark, PlayCircle, Menu } from 'lucide-react';
 import { Movie } from '../types';
 
 interface NavbarProps {
@@ -24,6 +24,7 @@ const Navbar: React.FC<NavbarProps> = ({ onAIToggle, activeTab, onTabChange, onS
   const [isScrolled, setIsScrolled] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
   const [query, setQuery] = useState('');
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   
   // Notification State
   const [showNotifications, setShowNotifications] = useState(false);
@@ -149,11 +150,19 @@ const Navbar: React.FC<NavbarProps> = ({ onAIToggle, activeTab, onTabChange, onS
   ];
 
   return (
-    <nav className={`fixed w-full z-50 transition-colors duration-300 ${isScrolled ? 'bg-[#141414]' : 'bg-gradient-to-b from-black/80 to-transparent'}`}>
-      <div className="px-4 md:px-12 py-4 flex items-center justify-between">
-        <div className="flex items-center gap-8">
+    <nav className={`fixed w-full z-50 transition-colors duration-300 ${isScrolled ? 'bg-[#141414]' : 'bg-gradient-to-b from-black/90 to-transparent'}`}>
+      <div className="px-4 md:px-12 py-3 md:py-4 flex items-center justify-between">
+        <div className="flex items-center gap-4 md:gap-8">
+          {/* Mobile Menu Button */}
+          <button 
+            className="md:hidden text-white"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          >
+            <Menu size={24} />
+          </button>
+
           <h1 
-            className="text-red-600 text-2xl md:text-3xl font-bold tracking-tighter cursor-pointer"
+            className="text-red-600 text-xl md:text-3xl font-bold tracking-tighter cursor-pointer"
             onClick={() => {
               onTabChange('home');
               setQuery('');
@@ -163,6 +172,8 @@ const Navbar: React.FC<NavbarProps> = ({ onAIToggle, activeTab, onTabChange, onS
           >
             StreamAI
           </h1>
+          
+          {/* Desktop Nav */}
           <div className="hidden md:flex gap-6 text-sm font-medium text-gray-200">
             {navItems.map((item) => (
               <span 
@@ -180,12 +191,31 @@ const Navbar: React.FC<NavbarProps> = ({ onAIToggle, activeTab, onTabChange, onS
           </div>
         </div>
 
-        <div className="flex items-center gap-6 text-white">
+        <div className="flex items-center gap-3 md:gap-6 text-white">
+           {/* Search Bar */}
+           <div className={`flex items-center transition-all duration-300 ${showSearch ? 'bg-black/60 border border-white/50 px-2 py-1 rounded-sm absolute left-4 right-16 md:static z-50' : ''}`}>
+             <Search 
+               className="w-5 h-5 cursor-pointer hover:text-gray-300 transition" 
+               onClick={toggleSearch}
+             />
+             <input
+               id="navbar-search-input"
+               type="text"
+               placeholder="Titles, people, genres"
+               className={`bg-transparent border-none text-white text-sm focus:outline-none transition-all duration-300 ${showSearch ? 'w-full md:w-60 ml-2' : 'w-0 ml-0 overflow-hidden'}`}
+               value={query}
+               onChange={handleSearchChange}
+               onBlur={() => {
+                 if (!query) setShowSearch(false);
+               }}
+             />
+          </div>
+
           <button 
             onClick={onAIToggle}
             className="flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 px-3 py-1.5 rounded-full text-xs md:text-sm font-semibold transition-all shadow-[0_0_15px_rgba(99,102,241,0.5)] border border-white/10"
           >
-            <Sparkles size={16} className="text-yellow-200" />
+            <Sparkles size={14} className="text-yellow-200 md:w-4 md:h-4" />
             <span className="hidden sm:inline">Ask AI</span>
           </button>
           
@@ -203,7 +233,7 @@ const Navbar: React.FC<NavbarProps> = ({ onAIToggle, activeTab, onTabChange, onS
             </div>
 
             {showMyList && (
-              <div className="absolute top-10 right-0 md:-right-10 w-80 bg-[#181818] border border-gray-700 rounded-md shadow-2xl overflow-hidden animate-fade-in-up origin-top-right">
+              <div className="absolute top-10 -right-10 md:-right-10 w-72 md:w-80 bg-[#181818] border border-gray-700 rounded-md shadow-2xl overflow-hidden animate-fade-in-up origin-top-right z-50">
                 <div className="p-3 border-b border-gray-700 flex justify-between items-center bg-[#202020]">
                   <h3 className="font-semibold text-sm">My List</h3>
                   <span className="text-xs text-gray-400">{myList.length} items</span>
@@ -256,25 +286,6 @@ const Navbar: React.FC<NavbarProps> = ({ onAIToggle, activeTab, onTabChange, onS
             )}
           </div>
 
-          {/* Search Bar */}
-          <div className={`flex items-center transition-all duration-300 ${showSearch ? 'bg-black/60 border border-white/50 px-2 py-1 rounded-sm' : ''}`}>
-             <Search 
-               className="w-5 h-5 cursor-pointer hover:text-gray-300 transition" 
-               onClick={toggleSearch}
-             />
-             <input
-               id="navbar-search-input"
-               type="text"
-               placeholder="Titles, people, genres"
-               className={`bg-transparent border-none text-white text-sm focus:outline-none transition-all duration-300 ${showSearch ? 'w-32 md:w-60 ml-2' : 'w-0 ml-0 overflow-hidden'}`}
-               value={query}
-               onChange={handleSearchChange}
-               onBlur={() => {
-                 if (!query) setShowSearch(false);
-               }}
-             />
-          </div>
-
           {/* Notification Bell */}
           <div className="relative group" ref={notificationRef}>
             <div className="relative cursor-pointer" onClick={toggleNotifications}>
@@ -291,7 +302,7 @@ const Navbar: React.FC<NavbarProps> = ({ onAIToggle, activeTab, onTabChange, onS
 
             {/* Notification Dropdown */}
             {showNotifications && (
-              <div className="absolute top-10 right-0 w-80 bg-[#181818] border border-gray-700 rounded-md shadow-2xl overflow-hidden animate-fade-in-up origin-top-right">
+              <div className="absolute top-10 -right-16 md:right-0 w-72 md:w-80 bg-[#181818] border border-gray-700 rounded-md shadow-2xl overflow-hidden animate-fade-in-up origin-top-right z-50">
                 <div className="p-3 border-b border-gray-700 flex justify-between items-center bg-[#202020]">
                   <h3 className="font-semibold text-sm">Notifications</h3>
                   <button 
@@ -310,8 +321,8 @@ const Navbar: React.FC<NavbarProps> = ({ onAIToggle, activeTab, onTabChange, onS
                     >
                       <Bell size={16} className="text-indigo-400 mt-0.5" />
                       <div>
-                        <p className="text-sm font-medium text-indigo-200">Enable Desktop Notifications</p>
-                        <p className="text-xs text-indigo-300/70 mt-0.5">Get notified about new releases instantly.</p>
+                        <p className="text-sm font-medium text-indigo-200">Enable Notifications</p>
+                        <p className="text-xs text-indigo-300/70 mt-0.5">Get notified instantly.</p>
                       </div>
                     </div>
                   )}
@@ -337,11 +348,35 @@ const Navbar: React.FC<NavbarProps> = ({ onAIToggle, activeTab, onTabChange, onS
             )}
           </div>
 
-          <div className="w-8 h-8 rounded bg-blue-600 cursor-pointer flex items-center justify-center font-bold">
+          <div className="hidden md:flex w-8 h-8 rounded bg-blue-600 cursor-pointer items-center justify-center font-bold">
             U
           </div>
         </div>
       </div>
+
+      {/* Mobile Menu Overlay */}
+      {mobileMenuOpen && (
+        <div className="absolute top-full left-0 w-full bg-[#141414] border-t border-gray-800 md:hidden flex flex-col p-4 gap-4 animate-fade-in-down shadow-2xl">
+           {navItems.map((item) => (
+              <span 
+                key={item.id}
+                onClick={() => {
+                  onTabChange(item.id);
+                  setQuery('');
+                  onSearch('');
+                  setMobileMenuOpen(false);
+                }}
+                className={`text-lg py-2 border-b border-white/5 ${activeTab === item.id ? 'text-white font-bold' : 'text-gray-300'}`}
+              >
+                {item.label}
+              </span>
+            ))}
+            <div className="flex items-center gap-3 pt-2 text-gray-300">
+                <div className="w-8 h-8 rounded bg-blue-600 flex items-center justify-center font-bold text-white">U</div>
+                <span>My Profile</span>
+            </div>
+        </div>
+      )}
     </nav>
   );
 };
