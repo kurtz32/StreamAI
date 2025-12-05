@@ -68,6 +68,7 @@ export const fetchTrending = async (): Promise<Movie[]> => {
   try {
     const response = await fetch(`${BASE_URL}/trending/all/week?api_key=${API_KEY}&language=en-US`);
     const data = await response.json();
+    if (!data.results) return [];
     return data.results.map((m: any) => ({ ...mapResultToMovie(m), trending: true }));
   } catch (error) {
     console.error("Error fetching trending:", error);
@@ -79,6 +80,7 @@ export const fetchTopRated = async (): Promise<Movie[]> => {
   try {
     const response = await fetch(`${BASE_URL}/movie/top_rated?api_key=${API_KEY}&language=en-US`);
     const data = await response.json();
+    if (!data.results) return [];
     return data.results.map(mapResultToMovie);
   } catch (error) {
     console.error("Error fetching top rated:", error);
@@ -90,6 +92,7 @@ export const fetchMoviesByGenre = async (genreId: number): Promise<Movie[]> => {
   try {
     const response = await fetch(`${BASE_URL}/discover/movie?api_key=${API_KEY}&with_genres=${genreId}&language=en-US&sort_by=popularity.desc`);
     const data = await response.json();
+    if (!data.results) return [];
     return data.results.map(mapResultToMovie);
   } catch (error) {
     console.error(`Error fetching genre ${genreId}:`, error);
@@ -101,6 +104,7 @@ export const fetchNetflixOriginals = async (): Promise<Movie[]> => {
     try {
         const response = await fetch(`${BASE_URL}/discover/tv?api_key=${API_KEY}&with_networks=213`);
         const data = await response.json();
+        if (!data.results) return [];
         return data.results.map(mapResultToMovie);
     } catch (error) {
         console.error("Error fetching netflix originals:", error);
@@ -113,6 +117,7 @@ export const fetchTrendingTV = async (): Promise<Movie[]> => {
   try {
     const response = await fetch(`${BASE_URL}/trending/tv/week?api_key=${API_KEY}&language=en-US`);
     const data = await response.json();
+    if (!data.results) return [];
     return data.results.map((m: any) => ({ ...mapResultToMovie(m), trending: true }));
   } catch (error) {
     console.error("Error fetching trending TV:", error);
@@ -124,6 +129,7 @@ export const fetchTopRatedTV = async (): Promise<Movie[]> => {
   try {
     const response = await fetch(`${BASE_URL}/tv/top_rated?api_key=${API_KEY}&language=en-US`);
     const data = await response.json();
+    if (!data.results) return [];
     return data.results.map(mapResultToMovie);
   } catch (error) {
     console.error("Error fetching top rated TV:", error);
@@ -135,6 +141,7 @@ export const fetchTVByGenre = async (genreId: number): Promise<Movie[]> => {
   try {
     const response = await fetch(`${BASE_URL}/discover/tv?api_key=${API_KEY}&with_genres=${genreId}&language=en-US&sort_by=popularity.desc`);
     const data = await response.json();
+    if (!data.results) return [];
     return data.results.map(mapResultToMovie);
   } catch (error) {
     console.error(`Error fetching TV genre ${genreId}:`, error);

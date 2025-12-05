@@ -1,15 +1,17 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { Movie } from '../types';
 
-// Initialize Gemini Client
-const apiKey = process.env.API_KEY || ''; 
-const ai = new GoogleGenAI({ apiKey });
+// Safely access process.env to prevent ReferenceError in browser environments
+const apiKey = (typeof process !== 'undefined' && process.env && process.env.API_KEY) ? process.env.API_KEY : '';
+
+// Initialize Gemini Client only if key exists to avoid immediate errors, though usage will check
+const ai = apiKey ? new GoogleGenAI({ apiKey }) : null;
 
 export const getAIRecommendations = async (
   query: string,
   existingMovies: Movie[]
 ): Promise<Movie[]> => {
-  if (!apiKey) {
+  if (!ai || !apiKey) {
     console.warn("No API Key provided for Gemini.");
     // Fallback to random sorting if no API key
     return [...existingMovies].sort(() => 0.5 - Math.random()).slice(0, 3);
