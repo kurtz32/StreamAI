@@ -78,7 +78,7 @@ function App() {
               fetchTVByGenre(99)     // Documentary
             ]);
 
-            setFeaturedMovie(netflix[Math.floor(Math.random() * netflix.length)] || trending[0]);
+            setFeaturedMovie(netflix[Math.floor(Math.random() * netflix.length)] || trending[0] || null);
             setRow1({ title: "Trending TV Shows", data: trending });
             setRow2({ title: "Top Rated TV", data: topRated });
             setRow3({ title: "Netflix Originals", data: netflix });
@@ -91,7 +91,7 @@ function App() {
         } else if (activeTab === 'movies') {
             // LOAD MOVIES CONTENT
             const [trending, topRated, action, scifi, comedy, horror, romance, doc] = await Promise.all([
-                fetchTrending(), // Default trending endpoint usually mixes but we filter or use movie specific if strict
+                fetchTrending(), 
                 fetchTopRated(),
                 fetchMoviesByGenre(28),
                 fetchMoviesByGenre(878),
@@ -103,7 +103,7 @@ function App() {
              // Filter trending for just movies to be safe, though fetchTrending does 'all'
             const trendingMovies = trending.filter(m => m.mediaType !== 'tv');
 
-            setFeaturedMovie(trendingMovies[Math.floor(Math.random() * trendingMovies.length)]);
+            setFeaturedMovie(trendingMovies[Math.floor(Math.random() * trendingMovies.length)] || trendingMovies[0] || null);
             setRow1({ title: "Trending Movies", data: trendingMovies });
             setRow2({ title: "Top Rated Movies", data: topRated });
             setRow3({ title: "Action Thrillers", data: action });
@@ -126,7 +126,7 @@ function App() {
                 fetchNetflixOriginals()
             ]);
 
-            setFeaturedMovie(trending[Math.floor(Math.random() * trending.length)]);
+            setFeaturedMovie(trending[Math.floor(Math.random() * trending.length)] || trending[0] || null);
             setRow1({ title: "Trending Now", data: trending });
             setRow2({ title: "Top Rated", data: topRated });
             setRow3({ title: "Netflix Originals", data: netflix });
@@ -139,6 +139,7 @@ function App() {
 
       } catch (error) {
         console.error("Failed to load content", error);
+        // Ensure loading is false even on error so we don't get stuck on spinner
       } finally {
         setLoading(false);
       }
@@ -213,15 +214,19 @@ function App() {
          </div>
       ) : (
         <>
-          {featuredMovie && (
+          {featuredMovie ? (
             <Hero 
               movie={featuredMovie} 
               onPlay={() => handlePlay(featuredMovie)}
               onMoreInfo={() => setSelectedMovie(featuredMovie)}
             />
+          ) : (
+             // Spacer if no featured movie matches (or loading failed partially)
+             <div className="pt-24 md:pt-32"></div>
           )}
 
-          <div className="relative z-10 -mt-24 md:-mt-48 space-y-2 md:space-y-4">
+          {/* Conditional margin: only pull up if Hero exists */}
+          <div className={`relative z-10 space-y-2 md:space-y-4 ${featuredMovie ? '-mt-24 md:-mt-48' : ''}`}>
             {row1.data.length > 0 && <ContentRow title={row1.title} movies={row1.data} onMovieClick={setSelectedMovie} />}
             {row2.data.length > 0 && <ContentRow title={row2.title} movies={row2.data} onMovieClick={setSelectedMovie} />}
             {row3.data.length > 0 && <ContentRow title={row3.title} movies={row3.data} onMovieClick={setSelectedMovie} />}
