@@ -26,8 +26,8 @@ const ContentRow: React.FC<ContentRowProps> = ({ title, movies, onMovieClick }) 
   };
 
   return (
-    <div className="space-y-2 px-4 md:px-12 my-6 md:my-10 relative group">
-      <h2 className="text-gray-200 text-base md:text-xl font-semibold transition hover:text-white cursor-pointer mb-2 md:mb-3">
+    <div className="space-y-2 my-6 md:my-10 relative group">
+      <h2 className="text-gray-200 text-sm md:text-xl font-semibold transition hover:text-white cursor-pointer mb-2 px-4 md:px-12">
         {title}
       </h2>
       
@@ -40,7 +40,7 @@ const ContentRow: React.FC<ContentRowProps> = ({ title, movies, onMovieClick }) 
 
         <div 
           ref={rowRef}
-          className="flex items-start space-x-3 md:space-x-4 overflow-x-scroll no-scrollbar pb-4 pt-2"
+          className="flex items-start space-x-3 md:space-x-4 overflow-x-auto no-scrollbar pb-4 pt-2 px-4 md:px-12 scroll-smooth"
         >
           {movies.map((movie) => (
             <MovieCard key={movie.id} movie={movie} onClick={onMovieClick} />

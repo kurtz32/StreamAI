@@ -198,16 +198,18 @@ function App() {
       
       {isSearching ? (
          <div className="pt-24 px-4 md:px-12 min-h-screen">
-            <h2 className="text-2xl text-white font-bold mb-6">
+            <h2 className="text-xl md:text-2xl text-white font-bold mb-6">
               {searchResults.length > 0 ? `Results for "${searchQuery}"` : `No results found for "${searchQuery}"`}
             </h2>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
+            
+            {/* Responsive Grid for Search Results */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-6">
                 {searchResults.map(movie => (
                     <MovieCard 
                       key={movie.id} 
                       movie={movie} 
                       onClick={setSelectedMovie} 
-                      className="w-full aspect-video h-auto"
+                      className="w-full aspect-[2/3] h-auto"
                     />
                 ))}
             </div>
@@ -226,7 +228,7 @@ function App() {
           )}
 
           {/* Conditional margin: only pull up if Hero exists */}
-          <div className={`relative z-10 space-y-2 md:space-y-4 ${featuredMovie ? '-mt-24 md:-mt-48' : ''}`}>
+          <div className={`relative z-10 space-y-4 md:space-y-8 ${featuredMovie ? '-mt-24 sm:-mt-32 md:-mt-48' : ''}`}>
             {row1.data.length > 0 && <ContentRow title={row1.title} movies={row1.data} onMovieClick={setSelectedMovie} />}
             {row2.data.length > 0 && <ContentRow title={row2.title} movies={row2.data} onMovieClick={setSelectedMovie} />}
             {row3.data.length > 0 && <ContentRow title={row3.title} movies={row3.data} onMovieClick={setSelectedMovie} />}
@@ -261,7 +263,7 @@ function App() {
       
       {/* Footer */}
       {!isSearching && (
-        <footer className="mt-20 px-12 py-8 text-gray-500 text-sm text-center border-t border-gray-800">
+        <footer className="mt-20 px-6 md:px-12 py-8 text-gray-500 text-sm text-center border-t border-gray-800">
           <p>&copy; 2025 StreamAI. All rights reserved.</p>
           <p className="mt-2 text-indigo-400 font-medium">Develop by John Kurt Facturan</p>
           <p className="mt-2 text-xs opacity-50">Powered by Gemini API & TMDB</p>
