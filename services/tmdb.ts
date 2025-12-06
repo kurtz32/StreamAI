@@ -201,6 +201,17 @@ export const fetchTVDetails = async (id: string): Promise<any> => {
   }
 };
 
+// NEW: Fetch detailed season info to get air dates for episodes
+export const fetchTVSeasonDetails = async (tvId: string, seasonNumber: number): Promise<any> => {
+  try {
+    const response = await fetch(`${BASE_URL}/tv/${tvId}/season/${seasonNumber}?api_key=${API_KEY}&language=en-US`);
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching TV season details:", error);
+    return null;
+  }
+};
+
 export const searchMulti = async (query: string): Promise<Movie[]> => {
   try {
     const response = await fetch(`${BASE_URL}/search/multi?api_key=${API_KEY}&language=en-US&query=${encodeURIComponent(query)}&page=1&include_adult=false`);

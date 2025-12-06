@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowLeft, Signal, Wifi, WifiOff, Tv, Flag, Globe, Zap, Server, Settings, X } from 'lucide-react';
 import { Movie } from '../types';
-import { fetchTVDetails } from '../services/tmdb';
+import { fetchTVDetails, fetchTVSeasonDetails } from '../services/tmdb';
 
 interface WatchPageProps {
   movie: Movie;
@@ -35,12 +35,20 @@ const SERVERS = [
   { id: 'latino-pro', name: 'LatinoPro', icon: '🇲🇽', status: 'online', type: 'es', alias: 'vidsrc' },
 ];
 
+interface EpisodeData {
+    episode_number: number;
+    name: string;
+    air_date: string;
+    id: number;
+}
+
 const WatchPage: React.FC<WatchPageProps> = ({ movie, onBack }) => {
   const [server, setServer] = useState(SERVERS[0]);
   const [loading, setLoading] = useState(true);
   const [season, setSeason] = useState(1);
   const [episode, setEpisode] = useState(1);
   const [seasonsData, setSeasonsData] = useState<{ season_number: number; episode_count: number }[]>([]);
+  const [availableEpisodes, setAvailableEpisodes] = useState<EpisodeData[]>([]);
   const [showSidebar, setShowSidebar] = useState(false);
 
   // Reset loading when server/content changes
@@ -50,7 +58,7 @@ const WatchPage: React.FC<WatchPageProps> = ({ movie, onBack }) => {
     return () => clearTimeout(timer);
   }, [server, season, episode]);
 
-  // Fetch TV Details (Seasons & Episodes)
+  // Fetch TV Details (Seasons)
   useEffect(() => {
     if (movie.mediaType === 'tv') {
       const loadSeasons = async () => {
@@ -65,9 +73,35 @@ const WatchPage: React.FC<WatchPageProps> = ({ movie, onBack }) => {
     }
   }, [movie.id, movie.mediaType]);
 
+  // Fetch Episodes for Season and check availability
+  useEffect(() => {
+    if (movie.mediaType === 'tv' && season) {
+        const loadEpisodes = async () => {
+            const seasonData = await fetchTVSeasonDetails(movie.id, season);
+            if (seasonData && seasonData.episodes) {
+                const today = new Date().toISOString().split('T')[0];
+                const valid = seasonData.episodes.filter((ep: any) => {
+                    // Check if air_date exists and is in the past or today
+                    return ep.air_date && ep.air_date <= today;
+                });
+                setAvailableEpisodes(valid);
+
+                // If current episode is not in the valid list, reset to first available or 1
+                const validNums = valid.map((e: any) => e.episode_number);
+                if (!validNums.includes(episode) && validNums.length > 0) {
+                     setEpisode(validNums[0]);
+                }
+            } else {
+                setAvailableEpisodes([]);
+            }
+        };
+        loadEpisodes();
+    }
+  }, [movie.id, movie.mediaType, season]);
+
   const handleSeasonChange = (newSeason: number) => {
     setSeason(newSeason);
-    setEpisode(1); // Reset to episode 1 when season changes
+    setEpisode(1); // Reset to episode 1 when season changes (useEffect will correct if 1 is unavailable)
   };
 
   const getEmbedUrl = () => {
@@ -95,9 +129,6 @@ const WatchPage: React.FC<WatchPageProps> = ({ movie, onBack }) => {
 
     return `https://vidsrc.vip/embed/movie/${tmdbId}`;
   };
-
-  const currentSeason = seasonsData.find(s => s.season_number === season);
-  const episodeCount = currentSeason ? currentSeason.episode_count : 24;
 
   const handleBack = async () => {
     if (document.fullscreenElement) {
@@ -178,7 +209,7 @@ const WatchPage: React.FC<WatchPageProps> = ({ movie, onBack }) => {
               allowFullScreen
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
               referrerPolicy="origin"
-              sandbox="allow-forms allow-pointer-lock allow-same-origin allow-scripts allow-presentation"
+              sandbox="allow-forms allow-pointer-lock allow-same-origin allow-scripts allow-top-navigation"
             />
           </div>
         </div>
@@ -287,7 +318,15 @@ const WatchPage: React.FC<WatchPageProps> = ({ movie, onBack }) => {
                           onChange={(e) => setEpisode(Number(e.target.value))}
                           className="w-full bg-[#0a0a0a] text-white text-sm py-2 px-3 rounded border border-white/10 focus:border-indigo-500 outline-none appearance-none hover:border-white/30 transition cursor-pointer"
                         >
-                           {[...Array(episodeCount)].map((_, i) => <option key={i+1} value={i+1}>Episode {i+1}</option>)}
+                           {availableEpisodes.length > 0 ? (
+                               availableEpisodes.map((ep) => (
+                                   <option key={ep.id} value={ep.episode_number}>
+                                       Episode {ep.episode_number}
+                                   </option>
+                               ))
+                           ) : (
+                               <option disabled>No Episodes</option>
+                           )}
                         </select>
                      </div>
                   </div>
