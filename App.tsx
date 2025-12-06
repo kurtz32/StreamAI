@@ -227,8 +227,9 @@ function App() {
              <div className="pt-24 md:pt-32"></div>
           )}
 
-          {/* Conditional margin: only pull up if Hero exists */}
-          <div className={`relative z-10 space-y-4 md:space-y-8 ${featuredMovie ? '-mt-24 sm:-mt-32 md:-mt-48' : ''}`}>
+          {/* Conditional margin: Pull up content to overlap hero slightly, but NOT on small mobile screens where it covers buttons */}
+          {/* Changed -mt-24 to -mt-4 on mobile to fix overlap issue */}
+          <div className={`relative z-10 space-y-4 md:space-y-8 ${featuredMovie ? '-mt-4 sm:-mt-24 md:-mt-48' : ''}`}>
             {row1.data.length > 0 && <ContentRow title={row1.title} movies={row1.data} onMovieClick={setSelectedMovie} />}
             {row2.data.length > 0 && <ContentRow title={row2.title} movies={row2.data} onMovieClick={setSelectedMovie} />}
             {row3.data.length > 0 && <ContentRow title={row3.title} movies={row3.data} onMovieClick={setSelectedMovie} />}

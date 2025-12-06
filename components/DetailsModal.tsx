@@ -124,7 +124,7 @@ const DetailsModal: React.FC<DetailsModalProps> = ({ movie, onClose, onPlay, isB
         </div>
 
         {/* Details Section */}
-        <div className="px-4 md:px-12 py-6">
+        <div className="px-4 md:px-12 py-6 pb-20 md:pb-6">
            <div className="flex flex-col md:grid md:grid-cols-[2fr_1fr] gap-6 md:gap-8 mb-8">
              <div className="space-y-4">
                 <div className="flex items-center gap-3 text-sm md:text-base font-semibold">
